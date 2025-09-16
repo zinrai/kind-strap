@@ -1,0 +1,7 @@
+# https://github.com/tektoncd/pipeline
+tasks:
+  - name: tekton-pipeline
+    type: kubectl
+    namespace: tekton-pipelines
+    kubectlConfig:
+      manifestFile: https://storage.googleapis.com/tekton-releases/pipeline/previous/v0.69.1/release.yaml

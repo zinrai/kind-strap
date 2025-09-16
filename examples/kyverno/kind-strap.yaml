@@ -1,0 +1,11 @@
+tasks:
+  - name: kyverno
+    type: helm
+    namespace: kyverno
+    helmConfig:
+      repo:
+        name: kyverno
+        url: https://kyverno.github.io/kyverno/
+      chart: kyverno
+      version: 3.1.1
+      valuesFile: ./examples/kyverno/values.yaml

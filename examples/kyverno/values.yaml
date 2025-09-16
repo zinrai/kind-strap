@@ -1,0 +1,23 @@
+admissionController:
+  container:
+    resources:
+      limits:
+        memory: 512Mi
+  replicas: 3
+backgroundController:
+  resources:
+    limits:
+      memory: 256Mi
+  replicas: 3
+cleanupController:
+  resources:
+    limits:
+      memory: 256Mi
+  replicas: 1
+reportsController:
+  replicas: 3
+  resources:
+    limits:
+      memory: 512Mi
+crds:
+  install: true

@@ -1,0 +1,6 @@
+tasks:
+  - name: nginx
+    type: kustomize
+    namespace: nginx-system
+    kustomizeConfig:
+      path: ./examples/nginx/kustomize
