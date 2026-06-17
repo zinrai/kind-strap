@@ -1,0 +1,11 @@
+tasks:
+  - name: loki
+    type: helm
+    namespace: loki
+    helmConfig:
+      repo:
+        name: loki
+        url: https://grafana.github.io/helm-charts
+      chart: loki
+      version: 6.55.0
+      valuesFile: ./examples/loki/values.yaml
