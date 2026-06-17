@@ -2,8 +2,8 @@ package executor
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
-	"strings"
 
 	"github.com/zinrai/kind-strap/pkg/config"
 	"github.com/zinrai/kind-strap/pkg/utils"
@@ -22,11 +22,7 @@ func NewHelmExecutor(cmdExecutor *CommandExecutor, logger *utils.Logger) *HelmEx
 }
 
 func (h *HelmExecutor) AddRepository(ctx context.Context, repo config.RepoInfo) error {
-	// Check if repo already exists
-	output, err := h.cmdExecutor.Execute(ctx, "helm repo list")
-	if err == nil && strings.Contains(output, repo.Name) {
-		// Repository already exists, just update
-	} else {
+	if !h.repositoryExists(ctx, repo.Name) {
 		_, err := h.cmdExecutor.Execute(ctx, fmt.Sprintf("helm repo add %s %s", repo.Name, repo.URL))
 		if err != nil {
 			return fmt.Errorf("failed to add helm repository: %w", err)
@@ -34,12 +30,37 @@ func (h *HelmExecutor) AddRepository(ctx context.Context, repo config.RepoInfo) 
 	}
 
 	// Update repositories
-	_, err = h.cmdExecutor.Execute(ctx, "helm repo update")
+	_, err := h.cmdExecutor.Execute(ctx, "helm repo update")
 	if err != nil {
 		return fmt.Errorf("failed to update helm repositories: %w", err)
 	}
 
 	return nil
+}
+
+// repositoryExists reports whether a repo with the exact name is configured.
+// Matching the NAME column (not a substring of the whole listing) avoids a
+// false positive when the name appears inside another repo's URL.
+func (h *HelmExecutor) repositoryExists(ctx context.Context, name string) bool {
+	output, err := h.cmdExecutor.Execute(ctx, "helm repo list -o json")
+	if err != nil {
+		// helm exits non-zero when no repositories are configured yet.
+		return false
+	}
+
+	var repos []struct {
+		Name string `json:"name"`
+	}
+	if err := json.Unmarshal([]byte(output), &repos); err != nil {
+		return false
+	}
+
+	for _, r := range repos {
+		if r.Name == name {
+			return true
+		}
+	}
+	return false
 }
 
 func (h *HelmExecutor) InstallChart(ctx context.Context, task config.Task) error {
