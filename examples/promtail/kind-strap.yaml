@@ -1,0 +1,13 @@
+# Ships node pod logs into the in-cluster Loki for loki-logbench.
+# https://github.com/grafana/helm-charts/tree/main/charts/promtail
+tasks:
+  - name: promtail
+    type: helm
+    namespace: promtail
+    helmConfig:
+      repo:
+        name: grafana
+        url: https://grafana.github.io/helm-charts
+      chart: promtail
+      version: 6.16.6
+      valuesFile: ./examples/promtail/values.yaml

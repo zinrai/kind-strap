@@ -1,0 +1,23 @@
+# Push to the multi-tenant Loki (auth_enabled: true), one tenant per k8s
+# namespace. The `tenant` pipeline stage sets X-Scope-OrgID from the namespace
+# label, so logcli --org-id <namespace> reads back exactly that namespace.
+config:
+  clients:
+    - url: http://loki.loki.svc.cluster.local:3100/loki/api/v1/push
+  snippets:
+    pipelineStages:
+      - cri: {}                 # keep the default container-log parsing
+      - tenant:
+          label: namespace      # X-Scope-OrgID = pod namespace (= tenant)
+    # loki-logbench queries {pod_name="..."}; the default pipeline only emits
+    # `pod`, so add pod_name from the same metadata source.
+    extraRelabelConfigs:
+      - source_labels: [__meta_kubernetes_pod_name]
+        target_label: pod_name
+
+resources:
+  requests:
+    cpu: 25m
+    memory: 64Mi
+  limits:
+    memory: 128Mi
