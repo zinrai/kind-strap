@@ -12,7 +12,12 @@ import (
 	"github.com/zinrai/kind-strap/pkg/utils"
 )
 
-const version = "0.1.0"
+// Overridden at release time via -ldflags -X (see .goreleaser.yaml).
+var (
+	version = "dev"
+	commit  = "none"
+	date    = "unknown"
+)
 
 func main() {
 	if len(os.Args) < 2 {
@@ -23,7 +28,7 @@ func main() {
 	// Handle subcommands
 	switch os.Args[1] {
 	case "version":
-		fmt.Printf("kind-strap version %s\n", version)
+		fmt.Printf("kind-strap version %s (commit %s, built %s)\n", version, commit, date)
 		os.Exit(0)
 
 	case "help":
