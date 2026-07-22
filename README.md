@@ -32,19 +32,13 @@ Bootstrap your [kind](https://kind.sigs.k8s.io/) cluster with operators and mani
 
 ## Quick Start
 
-1. Install kind-strap:
-
-```bash
-$ go install github.com/zinrai/kind-strap@latest
-```
-
-2. Create your kind cluster:
+1. Create your kind cluster:
 
 ```bash
 $ kind create cluster
 ```
 
-3. Apply tasks
+2. Apply tasks
 
 Using the Kyverno example:
 
@@ -52,7 +46,7 @@ Using the Kyverno example:
 $ kind-strap apply -f examples/kyverno/kind-strap.yaml
 ```
 
-4. Clean up
+3. Clean up
 
 ```bash
 $ kind-strap delete -f examples/kyverno/kind-strap.yaml
